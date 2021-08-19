@@ -1,75 +1,91 @@
 "use strict";
-// Generics
-const str = ['Hi its me'];
-str[0].split(' ');
-const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve("Hi it's me");
-    }, 2000);
-});
-promise.then((data) => {
-    console.log(data);
-});
-// creating own generics function
-function merge(a, b) {
-    return Object.assign(a, b);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+// decorators
+function Logger(obj) {
+    console.log('Logging');
+    console.log(obj);
 }
-const mergeObj = merge({ name: 'John' }, { age: 44 });
-console.log(mergeObj);
-//constraint generics // forcing function to take only objects
-function mergeObject(a, b) {
-    return Object.assign(a, b);
-}
-// const ret=mergeObject({age:100},123); // this will not work
-const ret = mergeObject({ age: 32 }, { name: 'Naruto' });
-function countAndDescribe(a) {
-    let descriptionText = 'Got no value';
-    if (a.length === 1) {
-        descriptionText = 'Got 1 element';
-    }
-    else if (a.length > 1) {
-        descriptionText = 'Got ' + a.length + ' elements';
-    }
-    return [a, descriptionText];
-}
-console.log(countAndDescribe(['Sports', 'Cooking']));
-// keyof constraint
-function extractAndConvert(a, b) {
-    return a[b];
-}
-console.log(extractAndConvert({ name: 'Naruto' }, 'name'));
-// generic classes- problem with object as they are refrence and they must be deleted by storing object
-class DataStorage {
+let Aadmi = class Aadmi {
     constructor() {
-        this.data = [];
+        this.name = 'Naruto';
+        console.log('Creating class');
     }
-    addItem(a) {
-        this.data.push(a);
+};
+Aadmi = __decorate([
+    Logger
+], Aadmi);
+const pers = new Aadmi();
+console.log(pers);
+// Decorator factory
+function LoggingFactory(a) {
+    console.log('inside factory');
+    return function (constructor) {
+        console.log(a);
+        console.log(constructor);
+    };
+}
+let Man = class Man {
+    constructor() {
+        this.name = 'Naruto';
+        console.log('Creating object...');
     }
-    removeItem(a) {
-        if (this.data.indexOf(a) === -1) {
+};
+Man = __decorate([
+    LoggingFactory('Logging...... stuff up')
+], Man);
+// Building more useful decorators with multiple decorators
+function WithTemplate(template, hookId) {
+    console.log('inside template');
+    return function (constructor) {
+        const div = document.getElementById(hookId);
+        if (div) {
+            div.innerHTML = template;
+            const pers = new constructor();
+            const h1 = document.querySelector('h1');
+            if (h1) {
+                h1.innerText = pers.name;
+            }
+        }
+    };
+}
+let Person = class Person {
+    constructor() {
+        this.name = 'Naruto';
+        console.log('Creating object...');
+    }
+};
+Person = __decorate([
+    LoggingFactory('Logging lots of stuff'),
+    WithTemplate('<h1>Person Object</h1>', 'app')
+], Person);
+// property decorator
+function Log(target, property) {
+    console.log("property decoration");
+    console.log(target, property);
+}
+class Product {
+    constructor(a, b) {
+        this.title = a;
+        this._price = b;
+    }
+    set setPrice(a) {
+        if (a > 0) {
+            this._price = a;
             return;
         }
-        this.data.splice(this.data.indexOf(a), 1);
+        else {
+            throw new Error('Invalid value');
+        }
     }
-    printData() {
-        console.log(...this.data);
+    getPriceWithTax(tax) {
+        return (1 + tax) * this._price;
     }
 }
-const numberStore = new DataStorage();
-numberStore.addItem(123);
-numberStore.addItem(1234);
-numberStore.addItem(12345);
-numberStore.addItem(123456);
-numberStore.printData();
-numberStore.removeItem(1234);
-numberStore.printData();
-function createCourseGoal(title, description, completeUntil) {
-    let obj = {};
-    obj.title = title;
-    obj.description = description;
-    obj.completeUntil = completeUntil;
-    return obj;
-}
-const naam = ['John', 'Dwayne'];
-// naam.push('Edge'); // will not work as naam is readonly
+__decorate([
+    Log
+], Product.prototype, "title", void 0);
