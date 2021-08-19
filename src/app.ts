@@ -90,6 +90,56 @@ class Product{
     }
 }
 
+// more type of decorators
 
+function Log2(a:any,b:string|Symbol,c:PropertyDescriptor) {
+    // setter decorator
+    console.log('Setter Getter Decorator');
+    
+    console.log(a);
+    console.log(b);
+    console.log(c);
+}
+
+function Log3(a:any,b:string|Symbol,c:PropertyDescriptor) {
+    console.log('Function decorator');
+    console.log(a);
+    console.log(b);
+    console.log(c);
+}
+
+function Log4(a:any,b:string|Symbol,c:number) {
+    console.log('Parameter Decorator');
+    console.log(a);
+    console.log(b);
+    console.log(c);
+}
+
+console.log('\n\n\n\n');
+
+
+class Item{
+    @Log
+    title:string;
+    private _price:number;
+    constructor(a:string,b:number){
+        this.title=a;
+        this._price=b;
+    }
+    @Log2
+    set setPrice(a:number) {
+        if(a>0){
+            this._price=a
+            return;
+        }
+        else{
+            throw new Error('Invalid value');
+        }   
+    }
+    @Log3
+    getPriceWithTax(@Log4 tax:number){
+        return (1+tax)*this._price;
+    }
+}
 
 
